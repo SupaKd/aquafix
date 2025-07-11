@@ -1,0 +1,228 @@
+.home {
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.hero {
+  height: 80vh;
+  min-height: 500px;
+  background-size: cover;
+  background-position: center;
+  @include flex-center;
+  text-align: center;
+  color: $primary-color;
+  padding: 0 2rem;
+
+  &__content {
+    max-width: 800px;
+    @include slide-top(0.8s, 20%);
+  }
+
+  h1 {
+    font-size: clamp(3rem, 5vw, 4rem);
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color:$primary-color;
+  }
+
+  &__subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Services Section */
+.services-section {
+  padding: 1rem;
+  background: $secondary-color;
+
+  .section-title {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    margin-bottom: 4rem;
+    color: $text;
+    opacity: 0.8;
+  }
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+}
+
+.service-card {
+  background: $primary-color;
+  padding: 2.5rem 2rem;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  text-align: center;
+  @include transition;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: $shadow-md;
+  }
+
+  .service-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: $bg-color;
+    color: $primary-color;
+    border-radius: 50%;
+    @include flex-center;
+    font-size: 2rem;
+  }
+
+  h3 {
+    margin-bottom: 1rem;
+    color: $text;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    color: $text;
+    opacity: 0.8;
+  }
+}
+
+.service-link {
+  color: $button;
+  font-weight: 600;
+  @include transition;
+
+  &:hover {
+    color: darken($button, 15%);
+  }
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 5rem 2rem;
+  background: #1E2A38;
+  color: $primary-color;
+  text-align: center;
+
+  h2 {
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    color:$primary-color;
+  }
+
+  p {
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+}
+
+/* Testimonials */
+.testimonials-section {
+  padding: 1rem 0;
+  background: $secondary-color;
+  h2 {
+    text-align: center;
+  }
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  margin-top: 4rem;
+  margin:1rem;
+
+}
+
+.testimonial-card {
+  background: $primary-color;
+  padding: 2.5rem;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  position: relative;
+
+  .quote-icon {
+    color: rgba($button, 0.2);
+    font-size: 3rem;
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+  }
+
+  .testimonial-text {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .testimonial-author {
+    font-weight: 600;
+    color: $text;
+  }
+
+  .rating {
+    color: #FFD700;
+    margin-top: 1rem;
+  }
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 2rem;
+  border-radius: $radius-pill;
+  font-weight: 600;
+  @include transition;
+
+  &--primary {
+    background: $button;
+    color: $primary-color;
+
+    &:hover {
+      background: darken($button, 10%);
+      transform: translateY(-3px);
+    }
+  }
+
+  &--secondary {
+    background: transparent;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+
+    &:hover {
+      background: rgba($primary-color, 0.1);
+    }
+  }
+
+  &--large {
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+  }
+}
+
+@include respond-to(sm) {
+  .hero {
+    height: 70vh;
+    
+    &__buttons {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+}

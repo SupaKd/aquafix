@@ -1,0 +1,108 @@
+
+.contact-section {
+  padding: 1rem 1rem;
+  background-color: $secondary-color;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: $text;
+    font-size: $font-size-xl;
+  }
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  background: $primary-color;
+  padding: 2rem;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+
+  .form-group {
+    margin-bottom: 2rem;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: $text;
+
+      svg {
+        color: $button;
+      }
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid darken($secondary-color, 10%);
+      border-radius: $radius-md;
+      @include transition;
+
+      &:focus {
+        border-color: $button;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba($button, 0.2);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+    }
+  }
+}
+
+.services-checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input[type="checkbox"] {
+    width: auto;
+    accent-color: $button;
+  }
+}
+
+.submit-btn {
+  background: $button;
+  color: $primary-color;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: $radius-pill;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  @include transition;
+
+  &:hover {
+    background: darken($button, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.success-message {
+  text-align: center;
+  background: $primary-color;
+  padding: 2rem;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  color: #1FE1B0;
+
+  .success-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+}
