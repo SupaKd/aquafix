@@ -1,131 +1,118 @@
-
-  // ==============================
-  // Flexbox shortcuts
-  // ==============================
+/* ==============================
+   Variables & breakpoints
+   ============================== */
+   $bp: (
+    xs: 480px,
+    sm: 640px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px
+  );
   
-  @mixin flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  /* ==============================
+     Helpers
+     ============================== */
+  @mixin respond-up($key) {
+    @media (min-width: map-get($bp, $key)) { @content; }
   }
   
-  @mixin flex-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  @mixin transition($props: all, $dur: .25s, $easing: cubic-bezier(.2,.8,.2,1)) {
+    transition: $props $dur $easing;
   }
   
-  @mixin flex-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @mixin flex-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  // ==============================
-  // Transition 
-  // ==============================
-  
-  @mixin transition($properties: all, $duration: 0.3s, $timing: ease-in-out) {
-    transition: $properties $duration $timing;
-  }
-  
-  @mixin slide-left($duration: 1s, $distance: 100%) {
-    animation: slide-left $duration ease-out forwards;
-  
-    @keyframes slide-left {
-      0% {
-        transform: translateX(#{$distance});
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-  }
-
-  @mixin slide-top($duration: 1s, $distance: 100%) {
-    animation: slide-top $duration ease-out forwards;
-  
-    @keyframes slide-top {
-      0% {
-        transform: translateY(#{$distance});
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-  }
-
-  @mixin slide-bottom($duration: 1s, $distance: 100%) {
-    animation: slide-bottom $duration ease-out forwards;
-  
-    @keyframes slide-bottom {
-      0% {
-        transform: translateY(-#{$distance});
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
+  @mixin focus-ring($c: rgba(23,177,227,.45)) {
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px $c;
     }
   }
   
+  @mixin fluid-font($min, $max, $minvw: 320px, $maxvw: 1200px) {
+    font-size: clamp(#{$min}, calc(#{$min} + (#{$max} - #{$min}) * ((100vw - #{$minvw}) / (#{$maxvw} - #{$minvw}))), #{$max});
+  }
   
+  /* Flex shortcuts */
+  @mixin flex-center { display:flex; justify-content:center; align-items:center; }
+  @mixin flex-between { display:flex; justify-content:space-between; align-items:center; }
+  @mixin flex-column { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  @mixin flex-row { display:flex; flex-direction:row; align-items:center; justify-content:center; }
   
-  // ==============================
-  // Effet 
-  // ==============================
-
-  @mixin shake-hover($duration: 0.5s, $distance: 5px) {
-    transition: transform 0.1s ease-in-out;
+  /* ==============================
+     Keyframes (déclarées une fois)
+     ============================== */
+  @keyframes slide-left-kf { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes slide-right-kf { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes slide-up-kf { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes slide-down-kf { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes fade-in-kf { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop-kf { 0% { transform: scale(.96); opacity:.6; } 100% { transform: scale(1); opacity:1; } }
+  @keyframes shake-kf {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
   
-    &:hover {
-      animation: shake $duration infinite;
-    }
+  /* ==============================
+     Motion-safe wrappers
+     ============================== */
+  @mixin motion-safe { @media (prefers-reduced-motion: no-preference) { @content; } }
   
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-#{$distance}); }
-      50% { transform: translateX(#{$distance}); }
-      75% { transform: translateX(-#{$distance}); }
-      100% { transform: translateX(0); }
+  /* ==============================
+     Animations prêtes à l’emploi
+     ============================== */
+  @mixin slide-left($dur: .6s)   { @include motion-safe { animation: slide-left-kf $dur ease-out both; } }
+  @mixin slide-right($dur: .6s)  { @include motion-safe { animation: slide-right-kf $dur ease-out both; } }
+  @mixin slide-top($dur: .6s)    { @include motion-safe { animation: slide-up-kf $dur ease-out both; } }
+  @mixin slide-bottom($dur: .6s) { @include motion-safe { animation: slide-down-kf $dur ease-out both; } }
+  @mixin fade-in($dur: .4s)      { @include motion-safe { animation: fade-in-kf $dur ease-out both; } }
+  @mixin pop-in($dur: .3s)       { @include motion-safe { animation: pop-kf $dur ease-out both; } }
+  
+  /* Shake au hover, court et non-infini */
+  @mixin shake-hover($dur: .35s) {
+    @include motion-safe {
+      &:hover { animation: shake-kf $dur ease-in-out 1; }
     }
   }
   
-  @mixin responsive-font($min-size, $max-size) {
-    font-size: clamp($min-size, 2vw, $max-size);
+  /* ==============================
+     Utilitaires
+     ============================== */
+  @mixin will-transform($prop: transform) {
+    will-change: $prop;
+    backface-visibility: hidden;
+    transform: translateZ(0);
   }
   
-  @mixin respond-to($breakpoint) {
-    @if $breakpoint == xs {
-      @media (max-width: 480px) { @content; }
-    } @else if $breakpoint == sm {
-      @media (max-width: 768px) { @content; }
-    } @else if $breakpoint == md {
-      @media (max-width: 1024px) { @content; }
-    } @else if $breakpoint == lg {
-      @media (max-width: 1280px) { @content; }
+  /* ==============================
+     Exemples d’utilisation
+     ============================== */
+  /*
+  .button {
+    @include transition(background-color, .2s);
+    @include focus-ring();
+    @include shake-hover();
+  
+    &:active { transform: translateY(1px); }
+  }
+  
+  .card {
+    @include pop-in(.4s);
+    @include will-transform();
+  }
+  
+  .h1 { @include fluid-font(2rem, 3rem); }
+  
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  
+    @include respond-up(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond-up(lg) {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
+  */
   

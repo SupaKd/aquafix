@@ -1,127 +1,217 @@
-import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPhone, faEnvelope, faCheck } from '@fortawesome/free-solid-svg-icons';
+// src/pages/Contact.jsx
+import { useState, useMemo } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faPhone, faEnvelope, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
-const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    message: '',
-    services: []
+export default function Contact() {
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+    services: [],
+    consent: false,
+    website: "", // honeypot
   });
+  const [touched, setTouched] = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Liste des services proposés
   const serviceOptions = [
-    { id: 'repair', label: 'Réparation fuite' },
-    { id: 'installation', label: 'Installation sanitaire' },
-    { id: 'maintenance', label: 'Maintenance chaudière' },
-    { id: 'emergency', label: 'Urgence 24/7' }
+    { id: "repair", label: "Réparation fuite" },
+    { id: "installation", label: "Installation sanitaire" },
+    { id: "maintenance", label: "Maintenance chaudière" },
+    { id: "emergency", label: "Urgence 24/7" },
   ];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const errors = useMemo(() => {
+    const e = {};
+    const phoneRe = /^(?:\+33|0)[1-9]\d{8}$/; // FR
+    if (!form.name.trim()) e.name = "Nom requis.";
+    if (!phoneRe.test(form.phone.replace(/\s+/g, ""))) e.phone = "Téléphone français valide requis.";
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Email invalide.";
+    if (!form.services.length) e.services = "Sélectionnez au moins un service.";
+    if (!form.consent) e.consent = "Consentement requis.";
+    return e;
+  }, [form]);
+
+  const isValid = Object.keys(errors).length === 0;
+
+  const onChange = (e) => {
+    const { name, type, checked, value } = e.target;
+    setForm((p) => ({ ...p, [name]: type === "checkbox" && name !== "services" ? checked : value }));
   };
 
-  const handleServiceToggle = (serviceId) => {
-    setFormData(prev => ({
-      ...prev,
-      services: prev.services.includes(serviceId)
-        ? prev.services.filter(id => id !== serviceId)
-        : [...prev.services, serviceId]
+  const toggleService = (id) => {
+    setForm((p) => ({
+      ...p,
+      services: p.services.includes(id) ? p.services.filter((s) => s !== id) : [...p.services, id],
     }));
   };
 
-  const handleSubmit = (e) => {
+  const onBlur = (e) => setTouched((p) => ({ ...p, [e.target.name || e.target.id]: true }));
+
+  const onSubmit = (e) => {
     e.preventDefault();
-    console.log('Formulaire soumis :', formData); // Remplacez par votre logique d'envoi (API, email, etc.)
-    setIsSubmitted(true);
-    // Réinitialisation après 3 secondes
-    setTimeout(() => setIsSubmitted(false), 3000);
+    if (form.website) return; // bot
+    if (!isValid) {
+      setTouched({ name: true, phone: true, email: !!form.email, services: true, consent: true });
+      return;
+    }
+    // TODO: remplacer par votre logique d’envoi (API / email)
+    // console.log("payload", form);
+    setSubmitted(true);
+    setForm({ name: "", phone: "", email: "", message: "", services: [], consent: false, website: "" });
+    setTouched({});
+    setTimeout(() => setSubmitted(false), 3500);
   };
 
   return (
-    <section className="contact-section">
+    <section className="contact-section" aria-labelledby="contact-title">
       <div className="container">
-        <h2>Demande de devis</h2>
-        
-        {isSubmitted ? (
-          <div className="success-message">
-            <FontAwesomeIcon icon={faCheck} className="success-icon" />
-            <p>Merci ! Nous vous contacterons rapidement.</p>
+        <h2 id="contact-title">Demande de devis</h2>
+
+        {submitted ? (
+          <div className="success" role="status" aria-live="polite">
+            <FontAwesomeIcon icon={faCheck} className="success__icon" />
+            <p>Merci. Nous vous recontactons rapidement.</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="contact-form">
-            {/* Champ Nom */}
-            <div className="form-group">
+          <form className="contact-form" onSubmit={onSubmit} noValidate>
+            {/* Honeypot */}
+            <input
+              type="text"
+              name="website"
+              value={form.website}
+              onChange={onChange}
+              tabIndex={-1}
+              autoComplete="off"
+              className="hp"
+              aria-hidden="true"
+            />
+
+            {/* Nom */}
+            <div className={`form-group ${touched.name && errors.name ? "is-error" : ""}`}>
               <label htmlFor="name">
-                <FontAwesomeIcon icon={faUser} /> Nom complet *
+                <FontAwesomeIcon icon={faUser} aria-hidden="true" /> Nom complet *
               </label>
               <input
-                type="text"
                 id="name"
                 name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                type="text"
+                value={form.name}
+                onChange={onChange}
+                onBlur={onBlur}
+                autoComplete="name"
                 placeholder="Jean Dupont"
+                aria-invalid={!!(touched.name && errors.name)}
+                aria-describedby={touched.name && errors.name ? "err-name" : undefined}
+                required
               />
+              {touched.name && errors.name && <p id="err-name" className="error">{errors.name}</p>}
             </div>
 
-            {/* Champ Téléphone */}
-            <div className="form-group">
+            {/* Téléphone */}
+            <div className={`form-group ${touched.phone && errors.phone ? "is-error" : ""}`}>
               <label htmlFor="phone">
-                <FontAwesomeIcon icon={faPhone} /> Téléphone *
+                <FontAwesomeIcon icon={faPhone} aria-hidden="true" /> Téléphone *
               </label>
               <input
-                type="tel"
                 id="phone"
                 name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
+                type="tel"
+                inputMode="tel"
+                pattern="^(?:\+33|0)[1-9]\d{8}$"
+                value={form.phone}
+                onChange={(e) =>
+                  onChange({
+                    ...e,
+                    target: { ...e.target, value: e.target.value.replace(/[^\d+ ]/g, "") },
+                  })
+                }
+                onBlur={onBlur}
+                autoComplete="tel"
                 placeholder="06 12 34 56 78"
-                pattern="[0-9]{10}"
-                title="10 chiffres sans espaces"
+                aria-invalid={!!(touched.phone && errors.phone)}
+                aria-describedby={touched.phone && errors.phone ? "err-phone" : undefined}
+                required
               />
+              {touched.phone && errors.phone && <p id="err-phone" className="error">{errors.phone}</p>}
             </div>
 
-            {/* Cases à cocher - Services */}
-            <div className="form-group">
-              <label>Services nécessaires *</label>
+            {/* Email (optionnel) */}
+            <div className={`form-group ${touched.email && errors.email ? "is-error" : ""}`}>
+              <label htmlFor="email">
+                <FontAwesomeIcon icon={faEnvelope} aria-hidden="true" /> Email (optionnel)
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={onChange}
+                onBlur={onBlur}
+                autoComplete="email"
+                placeholder="exemple@mail.com"
+                aria-invalid={!!(touched.email && errors.email)}
+                aria-describedby={touched.email && errors.email ? "err-email" : undefined}
+              />
+              {touched.email && errors.email && <p id="err-email" className="error">{errors.email}</p>}
+            </div>
+
+            {/* Services */}
+            <fieldset className={`form-group ${touched.services && errors.services ? "is-error" : ""}`}>
+              <legend>Services nécessaires *</legend>
               <div className="services-checkbox-group">
-                {serviceOptions.map(service => (
-                  <div key={service.id} className="checkbox-item">
+                {serviceOptions.map((s) => (
+                  <div key={s.id} className="checkbox-item">
                     <input
                       type="checkbox"
-                      id={service.id}
-                      checked={formData.services.includes(service.id)}
-                      onChange={() => handleServiceToggle(service.id)}
+                      id={s.id}
+                      checked={form.services.includes(s.id)}
+                      onChange={() => toggleService(s.id)}
+                      onBlur={() => setTouched((p) => ({ ...p, services: true }))}
                     />
-                    <label htmlFor={service.id}>{service.label}</label>
+                    <label htmlFor={s.id}>{s.label}</label>
                   </div>
                 ))}
               </div>
-            </div>
+              {touched.services && errors.services && <p className="error">{errors.services}</p>}
+            </fieldset>
 
-            {/* Champ Message */}
+            {/* Message */}
             <div className="form-group">
               <label htmlFor="message">
-                <FontAwesomeIcon icon={faEnvelope} /> Message (optionnel)
+                <FontAwesomeIcon icon={faEnvelope} aria-hidden="true" /> Message (optionnel)
               </label>
               <textarea
                 id="message"
                 name="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Décrivez brièvement votre problème..."
-                rows="4"
+                rows={4}
+                value={form.message}
+                onChange={onChange}
+                placeholder="Décrivez brièvement votre besoin…"
               />
             </div>
 
-            <button type="submit" className="submit-btn">
+            {/* Consentement */}
+            <div className={`form-group form-consent ${touched.consent && errors.consent ? "is-error" : ""}`}>
+              <input
+                id="consent"
+                name="consent"
+                type="checkbox"
+                checked={form.consent}
+                onChange={onChange}
+                onBlur={onBlur}
+                required
+              />
+              <label htmlFor="consent">
+                J’accepte que mes données soient utilisées pour me recontacter. <Link to="/">En savoir plus</Link>.
+              </label>
+              {touched.consent && errors.consent && <p className="error">{errors.consent}</p>}
+            </div>
+
+            <button type="submit" className="submit-btn" disabled={!isValid}>
               Envoyer la demande
             </button>
           </form>
@@ -129,6 +219,4 @@ const Contact = () => {
       </div>
     </section>
   );
-};
-
-export default Contact;
+}

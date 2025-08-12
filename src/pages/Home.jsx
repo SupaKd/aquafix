@@ -1,140 +1,125 @@
+// src/pages/Home.jsx
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWrench,
   faTint,
   faFire,
   faClock,
-  faCheckCircle,
   faQuoteLeft,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Contact from "./Contact";
 
-const Home = () => {
+export default function Home() {
+  const navigate = useNavigate();
+
   const services = [
-    {
-      icon: faTint,
-      title: "Dépannage fuites",
-      description: "Intervention rapide pour réparer toutes fuites d'eau.",
-    },
-    {
-      icon: faWrench,
-      title: "Installation sanitaire",
-      description: "Installation et remplacement de sanitaires.",
-    },
-    {
-      icon: faFire,
-      title: "Chauffage",
-      description: "Installation et entretien de chaudières.",
-    },
-    {
-      icon: faClock,
-      title: "Urgences 24/7",
-      description: "Disponible en permanence pour les situations critiques.",
-    },
+    { icon: faTint,  title: "Dépannage fuites",     description: "Réparation rapide de fuites d’eau." },
+    { icon: faWrench,title: "Installation sanitaire",description: "Pose et remplacement de sanitaires." },
+    { icon: faFire,  title: "Chauffage",             description: "Installation et entretien de chaudières." },
+    { icon: faClock, title: "Urgences 24/7",         description: "Disponible pour les situations critiques." },
   ];
 
-  // Témoignages clients
   const testimonials = [
     {
       quote:
-        "Intervention en moins d'1h pour une fuite importante. Professionnalisme impeccable !",
-      author: "Martine D., Paris",
+        "Intervention en moins d’une heure pour une fuite importante. Travail propre.",
+      author: "Martine D., Lyon",
     },
     {
       quote:
-        "Le plombier a expliqué clairement le problème et le devis était très raisonnable.",
-      author: "Pierre L., Montreuil",
+        "Diagnostic clair et prix correct. Je recommande.",
+      author: "Pierre L., Villeurbanne",
     },
   ];
 
+  const goToServices = () => {
+    const el = document.getElementById("services");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    else navigate("/#services");
+  };
+
   return (
     <main className="home">
-      {/* Hero Section */}
-      <section
-        className="hero"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/herofix.webp)",
-        }}
-      >
-        <div className="hero__content">
+      {/* HERO */}
+      <section className="hero" aria-label="Plombier à Lyon">
+        <div className="hero__overlay" />
+        <div className="hero__content container">
           <h1>Votre plombier professionnel à Lyon</h1>
-          <p className="hero__subtitle">Services rapides et garantis 24h/24</p>
-          <div className="hero__buttons">
-            <a href="tel:+33123456789" className="btn btn--primary">
-              {" "}
-              <FontAwesomeIcon icon={faPhone} /> Urgence
+          <p className="hero__subtitle">Dépannage rapide. Qualité garantie.</p>
+          <div className="hero__actions">
+            <a href="tel:+33612345678" className="btn btn--primary">
+              <FontAwesomeIcon icon={faPhone} />
+              <span className="sr-only">Appeler</span>
+              <span aria-hidden="true"> Urgence 06&nbsp;12&nbsp;34&nbsp;56&nbsp;78</span>
             </a>
-
-            <Link to="#services" className="btn btn--secondary">
+            <button type="button" className="btn btn--secondary" onClick={goToServices}>
               Nos services
-            </Link>
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="services-section">
+      {/* SERVICES */}
+      <section className="services" id="services" aria-labelledby="services-title">
         <div className="container">
-          <h2 className="section-title">Nos services</h2>
+          <h2 id="services-title" className="section-title">Nos services</h2>
           <p className="section-subtitle">
-            Des solutions adaptées à tous vos besoins en plomberie
+            Solutions adaptées à vos besoins en plomberie et chauffage.
           </p>
 
-          <div className="services-grid" id="services">
-            {services.map((service, index) => (
-              <div className="service-card" key={index}>
-                <div className="service-icon">
-                  <FontAwesomeIcon icon={service.icon} />
+          <ul className="services__grid" role="list">
+            {services.map((s, i) => (
+              <li className="service" key={i}>
+                <div className="service__icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={s.icon} />
                 </div>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-                <Link to="/contact" className="service-link">
+                <h3 className="service__title">{s.title}</h3>
+                <p className="service__desc">{s.description}</p>
+                <Link to="/contact" className="service__link" aria-label={`Devis pour ${s.title}`}>
                   Demander un devis
                 </Link>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* Call-to-Action */}
-      <section className="cta-section">
-        <div className="container">
-          <h2>Besoin d'un plombier rapidement ?</h2>
-          <p>Nous intervenons dans l'heure pour les urgences</p>
-          <Link to="/contact" className="btn btn--large">
-            <FontAwesomeIcon icon={faPhone} /> 06 12 34 56 78
-          </Link>
+      {/* CTA */}
+      <section className="cta" aria-label="Intervention rapide">
+        <div className="container cta__inner">
+          <h2>Besoin d’un plombier rapidement&nbsp;?</h2>
+          <p>Intervention possible dans l’heure sur Lyon et alentours.</p>
+          <a href="tel:+33612345678" className="btn btn--large">
+            <FontAwesomeIcon icon={faPhone} /> 06&nbsp;12&nbsp;34&nbsp;56&nbsp;78
+          </a>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials-section">
+      {/* TÉMOIGNAGES */}
+      <section className="testimonials" aria-labelledby="testimonials-title">
         <div className="container">
-          <h2 className="section-title">Nos clients témoignent</h2>
+          <h2 id="testimonials-title" className="section-title">Avis clients</h2>
 
-          <div className="testimonials-grid">
-            {testimonials.map((testimonial, index) => (
-              <div className="testimonial-card" key={index}>
-                <FontAwesomeIcon icon={faQuoteLeft} className="quote-icon" />
-                <p className="testimonial-text">{testimonial.quote}</p>
-                <p className="testimonial-author">- {testimonial.author}</p>
-                <div className="rating">
-                  {[...Array(5)].map((_, i) => (
-                    <FontAwesomeIcon icon={faCheckCircle} key={i} />
-                  ))}
+          <ul className="testimonials__grid" role="list">
+            {testimonials.map((t, i) => (
+              <li className="testimonial" key={i}>
+                <FontAwesomeIcon icon={faQuoteLeft} className="testimonial__quoteIcon" aria-hidden="true" />
+                <blockquote className="testimonial__text">
+                  <p>{t.quote}</p>
+                  <footer className="testimonial__author">— {t.author}</footer>
+                </blockquote>
+                <div className="testimonial__rating" aria-label="Note 5 sur 5">
+                  {"★★★★★"}
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
+
       <Contact />
     </main>
   );
-};
-
-export default Home;
+}

@@ -1,86 +1,123 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
-import { Link } from 'react-router-dom';
+// src/layout/Footer.jsx
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPhone,
+  faEnvelope,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
+import { faFacebook, faInstagram, faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import { Link } from "react-router-dom";
 
-const Footer = () => {
+export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="footer">
-      <div className="container footer__container">
-        {/* Colonne 1 : Logo + Description */}
+    <footer className="footer" itemScope itemType="https://schema.org/Plumber">
+      <div className="footer__container">
+        {/* Col 1 : Logo + pitch */}
         <div className="footer__col">
-          <h3 className="footer__logo">AquaFix</h3>
-          <p className="footer__description">
-            Votre plombier professionnel pour des solutions rapides et durables. 
-            Intervention 24h/24 pour les urgences.
+          <Link to="/" className="footer__brand" aria-label="Retour à l’accueil">
+            <img
+              src="/aquafix.webp"
+              alt="Aquafix Plombier"
+              width="140"
+              height="40"
+              loading="lazy"
+              decoding="async"
+              itemProp="image"
+            />
+          </Link>
+          <p className="footer__desc" itemProp="description">
+            Plombier à Lyon. Dépannage rapide, réparation fuite, chauffe-eau, débouchage. Urgences 24/7.
           </p>
-          <div className="footer__social">
-            <a href="https://facebook.com" aria-label="Facebook">
-              <FontAwesomeIcon icon={faFacebook} />
+          <nav className="footer__social" aria-label="Réseaux sociaux">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="Facebook Aquafix"
+            >
+              <FontAwesomeIcon icon={faFacebook} aria-hidden="true" />
             </a>
-            <a href="https://instagram.com" aria-label="Instagram">
-              <FontAwesomeIcon icon={faInstagram} />
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="Instagram Aquafix"
+            >
+              <FontAwesomeIcon icon={faInstagram} aria-hidden="true" />
             </a>
-            <a href="https://wa.me/33612345678" aria-label="WhatsApp">
-              <FontAwesomeIcon icon={faWhatsapp} />
+            <a
+              href="https://wa.me/33612345678"
+              target="_blank"
+              rel="noopener"
+              aria-label="WhatsApp Aquafix"
+            >
+              <FontAwesomeIcon icon={faWhatsapp} aria-hidden="true" />
             </a>
-          </div>
+          </nav>
         </div>
 
-        {/* Colonne 2 : Liens rapides */}
+        {/* Col 2 : Liens */}
         <div className="footer__col">
-          <h4 className="footer__title">Liens rapides</h4>
+          <h2 className="footer__title">Liens rapides</h2>
           <ul className="footer__links">
             <li><Link to="/">Accueil</Link></li>
             <li><Link to="/services">Nos services</Link></li>
             <li><Link to="/about">À propos</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
             <li><Link to="/emergency">Urgences</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
           </ul>
         </div>
 
-        {/* Colonne 3 : Coordonnées */}
-        <div className="footer__col">
-          <h4 className="footer__title">Nous contacter</h4>
+        {/* Col 3 : Coordonnées */}
+        <div className="footer__col" itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
+          <h2 className="footer__title">Nous contacter</h2>
           <ul className="footer__contact">
             <li>
-              <FontAwesomeIcon icon={faPhone} />
-              <a href="tel:+33123456789">06 12 34 56 78</a>
+              <FontAwesomeIcon icon={faPhone} aria-hidden="true" />
+              <a href="tel:+33612345678" itemProp="telephone">06 12 34 56 78</a>
             </li>
             <li>
-              <FontAwesomeIcon icon={faEnvelope} />
-              <a href="mailto:contact@plombierpro.fr">contact@aquafix.fr</a>
+              <FontAwesomeIcon icon={faEnvelope} aria-hidden="true" />
+              <a href="mailto:contact@aquafix.fr" itemProp="email">contact@aquafix.fr</a>
             </li>
             <li>
-              <FontAwesomeIcon icon={faMapMarkerAlt} />
-              <span>123 Rue des lys, 69000 Lyon</span>
+              <FontAwesomeIcon icon={faLocationDot} aria-hidden="true" />
+              <address>
+                <span itemProp="streetAddress">123 Rue des Lys</span>,{" "}
+                <span itemProp="postalCode">69000</span>{" "}
+                <span itemProp="addressLocality">Lyon</span>
+              </address>
             </li>
           </ul>
+          <meta itemProp="name" content="Aquafix" />
+          <meta itemProp="priceRange" content="€€" />
+          <link itemProp="url" href="https://aquafix.fr" />
         </div>
 
-        {/* Colonne 4 : Horaires */}
+        {/* Col 4 : Horaires + CTA */}
         <div className="footer__col">
-          <h4 className="footer__title">Horaires</h4>
+          <h2 className="footer__title">Horaires</h2>
           <ul className="footer__hours">
-            <li>Lun-Ven : 8h-19h</li>
-            <li>Samedi : 9h-17h</li>
-            <li>Dimanche : Urgences uniquement</li>
+            <li><time itemProp="openingHours" dateTime="Mo-Fr 08:00-19:00">Lun–Ven : 8h–19h</time></li>
+            <li><time itemProp="openingHours" dateTime="Sa 09:00-17:00">Samedi : 9h–17h</time></li>
+            <li><time itemProp="openingHours" dateTime="Su 00:00-23:59">Dimanche : urgences</time></li>
           </ul>
-          <Link to="/contact" className="footer__cta">
+          <Link to="/contact" className="footer__cta" aria-label="Demander un devis gratuit">
             Demander un devis
           </Link>
         </div>
       </div>
 
-      {/* Copyright */}
-      <div className="footer__copyright">
-        <p>© {currentYear} Aquafix - Powered by SupaCo Tous droits réservés</p>
-        <p>Mentions légales | Politique de confidentialité</p>
+      <div className="footer__bottom">
+        <p>© {currentYear} Aquafix. Tous droits réservés.</p>
+        <p>
+          <Link to="/mentions-legales">Mentions légales</Link>
+          <span aria-hidden="true"> · </span>
+          <Link to="/confidentialite">Politique de confidentialité</Link>
+        </p>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

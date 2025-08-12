@@ -1,70 +1,68 @@
 // src/layout/Header.jsx
-import { useState, useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBarsStaggered,
-  faXmark,
-  faPhone,
-} from "@fortawesome/free-solid-svg-icons";
 
-function Header() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef(null);
 
-  const toggleMenu = () => setIsOpen((prev) => !prev);
-  const closeMenu = () => setIsOpen(false);
+  const toggle = () => setOpen((v) => !v);
+  const close = () => setOpen(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    const onResize = () => window.matchMedia("(min-width: 992px)").matches && setOpen(false);
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("keydown", onKey);
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className={`header ${isScrolled ? "scrolled" : ""}`}>
-      <Link
-        className={`burger ${isOpen ? "rotate" : ""}`}
-        onClick={toggleMenu}
-        aria-label="Menu mobile"
-        aria-expanded={isOpen}
-      >
-        <FontAwesomeIcon icon={isOpen ? faXmark : faBarsStaggered} />
-      </Link>
-
-      <Link to="/" onClick={closeMenu} className="logo_mobile">
-        <img src="/aquafix.webp" alt="Logo" />
-      </Link>
-      <Link to="/" onClick={closeMenu} className="logo_desktop">
-        <img src="/aquafix.webp" alt="Logo" />
-      </Link>
-
-      <NavLink to="/contact" className="devis" onClick={closeMenu}>
-          Devis
-        </NavLink>
-
-      <nav
-        className={`header__nav ${isOpen ? "show" : ""}`}
-        aria-label="Navigation principale"
-      >
-        <NavLink to="/" className="acceuil" onClick={closeMenu}>
-          Accueil
-        </NavLink>
-
-        <a
-          href="tel:+33123456789"
-          className="header__nav-link"
-          onClick={closeMenu}
+    <header className={`header ${scrolled ? "header--scrolled" : ""}`}>
+      <div className="header__inner">
+        <button
+          type="button"
+          className={`header__burger ${open ? "is-open" : ""}`}
+          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={open}
+          aria-controls="main-nav"
+          onClick={toggle}
         >
-  <FontAwesomeIcon icon={faPhone} style={{ marginRight: '8px' }} />
-  <span>06 12 34 56 78</span>
-        </a>
-      </nav>
+          <span className="bar" />
+          <span className="bar" />
+          <span className="bar" />
+        </button>
+
+        <Link to="/" onClick={close} className="header__logo" aria-label="Accueil Aquafix">
+          <img src="/aquafix.webp" alt="Aquafix Plombier" width="140" height="40" />
+        </Link>
+
+        <nav
+          id="main-nav"
+          ref={navRef}
+          className={`header__nav ${open ? "is-visible" : ""}`}
+          aria-label="Navigation principale"
+        >
+          <NavLink
+            to="/"
+            onClick={close}
+            className={({ isActive }) => `header__link ${isActive ? "is-active" : ""}`}
+          >
+            Accueil
+          </NavLink>
+
+          <NavLink to="/contact" onClick={close} className="header__cta">
+            Devis gratuit
+          </NavLink>
+        </nav>
+      </div>
     </header>
   );
 }
-
-export default Header;
